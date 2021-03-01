@@ -28,7 +28,7 @@ public class PruebaExperimentalPseudoCliente {
         // Creates a ByteArrayOutputStream with default size
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
-        File myFile = new File("..\\XMLProject\\src\\file\\exa.xml");  
+        File myFile = new File("..\\XMLProject\\src\\file\\person.xml");  
         
         out.write(Files.readAllBytes(myFile.toPath()));
         

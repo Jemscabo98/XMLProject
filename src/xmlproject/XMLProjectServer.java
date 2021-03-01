@@ -12,6 +12,7 @@ import java.io.StringReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -22,6 +23,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import static person.XMLReaderDOM.getLista;
+import person.person;
 
 /**
  *
@@ -56,25 +59,24 @@ public class XMLProjectServer {
         for (int i = 0; i < size;)
             theChars[i] = (char)(bytes[i++]&0xff);
         
+        //Guarda los chars en un String
         String data = new String(theChars);
-        
-
-        //Convertir el String en XML       
-        
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"+
-             "<person>\n" +
-             "<name>Pedro</name>\n" +
-             "<height>1.82</height>\n" +
-             "<weight>85</weight>\n" +
-             "</person>";
                 
-        String a = new String(bytes);
-        
-        System.out.println("\n"+xml);
-        System.out.println("\n"+data);
-        
+        //Convierte el String en un documento xml
         Document doc = convertStringToDocument(data);
-        crearXML(doc);
+        //Dirección donde se va a guardar
+        String filePath = "..\\XMLProject\\src\\file\\personReceive.xml";
+        //Guarda el documento
+        crearXML(doc, filePath);
+        
+        //Obtiene la lista de personas del archivo XML
+        List<person> personas = getLista(filePath);
+        
+        //Se calcula la lista de personas de
+        for (person persona : personas) {
+            calcularIBM(persona);
+            System.out.println(persona.toString());
+        }
         
         
         
@@ -94,14 +96,26 @@ public class XMLProjectServer {
         return null;
     }
     
-     private static void crearXML(Document document) throws TransformerConfigurationException, TransformerException
-     {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource domSource = new DOMSource(document);
-        StreamResult streamResult = new StreamResult(new File("..\\XMLProject\\src\\file\\personReceive.xml"));
-        transformer.transform(domSource, streamResult);
-     }
-    
-    
+    private static void crearXML(Document document, String url ) throws TransformerConfigurationException, TransformerException
+    {
+       TransformerFactory transformerFactory = TransformerFactory.newInstance();
+       Transformer transformer = transformerFactory.newTransformer();
+       DOMSource domSource = new DOMSource(document);
+       StreamResult streamResult = new StreamResult(new File(url));
+       transformer.transform(domSource, streamResult);
+    }
+     
+    private static void calcularIBM(person persona)
+    {
+        persona.bmi = (Math.round((persona.getWeight()/Math.pow(persona.getHeight(), 2))*10.0)/10.0);
+                
+        if(persona.bmi < 18.5)
+            persona.setMeaning("Thin");
+        else if (persona.bmi < 24.9)
+            persona.setMeaning("Healthy");
+        else if (persona.bmi < 29.9)
+            persona.setMeaning("Overweight");
+        else             
+            persona.setMeaning("Obese");
+    }        
 }
