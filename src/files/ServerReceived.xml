@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><personas>
+    <person>
+        <name>Pedro</name>
+        <height>1.82</height>
+        <weight>85</weight>
+    </person>
+    <person>
+        <name>Pedro Juares de la Luna</name>
+        <height>1.92</height>
+        <weight>72</weight>
+    </person>
+    <person>
+        <name>Maria Lupita de las rosas</name>
+        <height>1.72</height>
+        <weight>52</weight>
+    </person>
+</personas>

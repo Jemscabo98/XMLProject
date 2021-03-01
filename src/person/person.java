@@ -10,11 +10,11 @@ package person;
  * @author Eduardo Montoya
  */
 public class person {
-    public String name;
-    public double height;
-    public double weight;
-    public double bmi;
-    public String meaning;
+    private String name;
+    private double height;
+    private double weight;
+    private double bmi;
+    private String meaning;
 
     public person(String name, double height, double weight) {
         this.name = name;
@@ -67,10 +67,12 @@ public class person {
 
     @Override
     public String toString() {
-        return "Person: Name= " + this.name + ", "
-                + "Height= "    + this.height + ", "
-                + "Weight= "    + this.weight + ", "
-                + "BMI= "       + this.bmi + ", "
-                + "State= "     + this.meaning;
+        return "\t<person>\n"
+                + "\t\t<name>"    + this.name +   "</name>\n"
+                + "\t\t<height>"  + this.height + "</height>\n"
+                + "\t\t<weight>"  + this.weight + "</weight>\n"
+                + "\t\t<bmi>"     + this.bmi +    "</bmi>\n"
+                + "\t\t<state>"   + this.meaning + "</state>\n"
+                + "\t</person>";
     }
 }
