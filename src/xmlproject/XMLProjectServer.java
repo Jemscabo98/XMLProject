@@ -66,7 +66,7 @@ public class XMLProjectServer {
         String filePath = "..\\XMLProject\\src\\files\\ServerReceived.xml";
         
         //Save the file
-        crearXML(doc, filePath);
+        createXML(doc, filePath);
         
         System.out.println("File received");
         System.out.println("Processing File");
@@ -78,7 +78,7 @@ public class XMLProjectServer {
         
         //The list of people is calculated
         for (Person person : people) {
-            calcularIBM(person);
+            calculateIBM(person);
             data = data+person.toString()+"\n";
         }
         
@@ -91,7 +91,7 @@ public class XMLProjectServer {
         filePath = "..\\XMLProject\\src\\files\\ServerSend.xml";
         
         //Save the file
-        crearXML(doc, filePath);
+        createXML(doc, filePath);
         
         System.out.println("Sending File back");
         
@@ -123,7 +123,7 @@ public class XMLProjectServer {
         return null;
     }
     
-    public static void crearXML(Document document, String url ) throws TransformerConfigurationException, TransformerException
+    public static void createXML(Document document, String url ) throws TransformerConfigurationException, TransformerException
     {
        TransformerFactory transformerFactory = TransformerFactory.newInstance();
        Transformer transformer = transformerFactory.newTransformer();
@@ -132,7 +132,7 @@ public class XMLProjectServer {
        transformer.transform(domSource, streamResult);
     }
      
-    public static void calcularIBM(Person person)
+    public static void calculateIBM(Person person)
     {
         person.setBmi((Math.round((person.getWeight()/Math.pow(person.getHeight(), 2))*10.0)/10.0));
                 

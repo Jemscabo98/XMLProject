@@ -14,9 +14,9 @@ import javax.xml.transform.TransformerException;
 import org.w3c.dom.Document;
 import static xmlproject.XMLReaderDOM.getList;
 import person.Person;
-import static xmlproject.XMLProjectServer.calcularIBM;
+import static xmlproject.XMLProjectServer.calculateIBM;
 import static xmlproject.XMLProjectServer.convertStringToDocument;
-import static xmlproject.XMLProjectServer.crearXML;
+import static xmlproject.XMLProjectServer.createXML;
 
 
 public class XMLProjectClient {
@@ -74,14 +74,14 @@ public class XMLProjectClient {
         String filePath = "..\\XMLProject\\src\\files\\ClientReceived.xml";
         
         //Save the file
-        crearXML(doc, filePath);
+        createXML(doc, filePath);
         
         //Gets the list of people from the XML file
         List<Person> people = getList(filePath);
         
         //The list of people is calculated
         for (Person persona : people) {
-            calcularIBM(persona);
+            calculateIBM(persona);
             System.out.println(persona.getName());
             System.out.println(persona.getHeight());
             System.out.println(persona.getWeight());
