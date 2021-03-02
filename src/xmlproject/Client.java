@@ -6,9 +6,11 @@
 package xmlproject;
 
 import GUI.frmClient;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -18,6 +20,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.xml.transform.TransformerException;
 import org.w3c.dom.Document;
 import person.Person;
@@ -32,11 +35,26 @@ import static xmlproject.XMLReaderDOM.getList;
  */
 public class Client extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Client
-     */
+    DatagramSocket udpSocket;
+            
+            // Creates a ByteArrayOutputStream with default size
+            ByteArrayOutputStream out;
+            
+            
+            File myFile ;
+            
+            byte buffer[] ;
+            
+            DatagramPacket packet;
+    
     public Client() {
-        initComponents();
+        try {
+            initComponents();
+            udpSocket = new DatagramSocket();
+            out = new ByteArrayOutputStream();
+        } catch (SocketException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -50,7 +68,8 @@ public class Client extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDoc = new javax.swing.JTextArea();
-        btnConect = new javax.swing.JButton();
+        btnSend = new javax.swing.JButton();
+        btnGet = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -58,10 +77,17 @@ public class Client extends javax.swing.JFrame {
         txtDoc.setRows(5);
         jScrollPane1.setViewportView(txtDoc);
 
-        btnConect.setText("conect");
-        btnConect.addActionListener(new java.awt.event.ActionListener() {
+        btnSend.setText("Send");
+        btnSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConectActionPerformed(evt);
+                btnSendActionPerformed(evt);
+            }
+        });
+
+        btnGet.setText("Get");
+        btnGet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGetActionPerformed(evt);
             }
         });
 
@@ -73,8 +99,10 @@ public class Client extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnConect)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnSend)
+                    .addComponent(btnGet))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -84,34 +112,41 @@ public class Client extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(46, 46, 46)
-                .addComponent(btnConect)
+                .addComponent(btnSend)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGet)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnConectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectActionPerformed
+    private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
         try {
-            DatagramSocket udpSocket = new DatagramSocket();
+            String name=JOptionPane.showInputDialog(null, "Enter file name: ");
             
-            // Creates a ByteArrayOutputStream with default size
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            
-            File myFile = new File("..\\XMLProject\\src\\files\\person.xml");
+            myFile = createDoc(name, txtDoc.getText());
             
             out.write(Files.readAllBytes(myFile.toPath()));
             
-            byte buffer[] = out.toByteArray();
+            buffer = out.toByteArray();
             
-            DatagramPacket packet =
-                    new DatagramPacket(buffer, buffer.length, InetAddress.getLocalHost(), 1001);
+            packet = new DatagramPacket(buffer, buffer.length, InetAddress.getLocalHost(), 1001);
             
             udpSocket.send(packet);
-            System.out.println("File Send");
+            JOptionPane.showMessageDialog(null,"File Send");
             
-            System.out.println("Waiting for an answer");
+            txtDoc.setText("");
             
+        } catch (SocketException ex) {
+            Logger.getLogger(frmClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(frmClient.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+    }//GEN-LAST:event_btnSendActionPerformed
+
+    private void btnGetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetActionPerformed
+        try {
             // Check that the package is received
             buffer = new byte[1024];
             packet = new DatagramPacket(buffer, buffer.length);
@@ -157,7 +192,7 @@ public class Client extends javax.swing.JFrame {
                             + "\n" + person.getHeight()
                             + "\n" + person.getWeight()
                             + "\n" + person.getBmi()
-                            + "\n" + person.getMeaning());
+                            + "\n" + person.getMeaning()+ "\n" );
                 }
                 else{
                     txtDoc.setText(txtDoc.getText()
@@ -165,7 +200,7 @@ public class Client extends javax.swing.JFrame {
                             + "\n" + person.getHeight()
                             + "\n" + person.getWeight()
                             + "\n" + person.getBmi()
-                            + "\n" + person.getMeaning());
+                            + "\n" + person.getMeaning()+ "\n" );
                 }
                 
                 System.out.println(person.getName());
@@ -173,16 +208,13 @@ public class Client extends javax.swing.JFrame {
                 System.out.println(person.getWeight());
                 System.out.println(person.getBmi());
                 System.out.println(person.getMeaning());
-                System.out.println("");
-            }
-        } catch (SocketException ex) {
-            Logger.getLogger(frmClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(frmClient.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("");}
         } catch (TransformerException ex) {
-            Logger.getLogger(frmClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_btnConectActionPerformed
+    }//GEN-LAST:event_btnGetActionPerformed
 
     /**
      * @param args the command line arguments
@@ -218,9 +250,31 @@ public class Client extends javax.swing.JFrame {
             }
         });
     }
+    
+    private File createDoc(String name, String content){
+        
+        
+            String path = "..\\XMLProject\\src\\files\\"+name+".xml";
+            File file = new File(path);
+        try {
+            // Si el archivo no existe es creado
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return file;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnConect;
+    private javax.swing.JButton btnGet;
+    private javax.swing.JButton btnSend;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtDoc;
     // End of variables declaration//GEN-END:variables
