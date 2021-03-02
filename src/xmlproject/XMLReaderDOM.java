@@ -1,8 +1,3 @@
-/*
- * Clase que lee el archivo XML y obtiene los nombres de personas.
- * Gran parte de este codigo esta basado del trabajo del señor Pankaj.
- * https://www.journaldev.com/898/read-xml-file-java-dom-parser#java-dom-parser
- */
 package xmlproject;
 
 import java.io.File;
@@ -17,22 +12,19 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import person.person;
+import person.Person;
 
-/**
- *
- * @author Eduardo Montoya
- */
+
 public class XMLReaderDOM {
     
     /**
-     * Gets the list of persons in the XML file
+     * Gets the list of people in the XML file
      * @param path Path to the file
      * @return Returns a list of every person in the XML file
      */
-    public static List<person> getLista(String path)
+    public static List<Person> getList(String path)
     {
-        List<person> personas = new ArrayList<person>();
+        List<Person> people = new ArrayList<Person>();
         File xmlFile = new File(path);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
@@ -41,22 +33,19 @@ public class XMLReaderDOM {
             dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(xmlFile);
             doc.getDocumentElement().normalize();
-            //System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+            
             NodeList nodeList = doc.getElementsByTagName("person");
             //now XML is loaded as Document in memory, lets convert it to Object List
            
             for (int i = 0; i < nodeList.getLength(); i++) {
-                personas.add(getPerson(nodeList.item(i)));
+                people.add(getPerson(nodeList.item(i)));
             }
-            /*lets print Employee list information
-            for (person emp : personas) {
-                System.out.println(emp.toString());
-            }*/
+            
         } catch (SAXException | ParserConfigurationException | IOException e1) {
             e1.printStackTrace();
         }        
         
-        return personas;
+        return people;
     }
     
     
@@ -65,8 +54,8 @@ public class XMLReaderDOM {
      * @param node Node where each person is ubicate
      * @return 
      */
-    private static person getPerson(Node node){
-        person per = new person();
+    private static Person getPerson(Node node){
+        Person per = new Person();
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Element element = (Element) node;
             per.setName(getTagValue("name", element));

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package xmlproject;
 
 import java.io.ByteArrayInputStream;
@@ -17,27 +12,25 @@ import java.nio.file.Files;
 import java.util.List;
 import javax.xml.transform.TransformerException;
 import org.w3c.dom.Document;
-import static xmlproject.XMLReaderDOM.getLista;
-import person.person;
+import static xmlproject.XMLReaderDOM.getList;
+import person.Person;
 import static xmlproject.XMLProjectServer.calcularIBM;
 import static xmlproject.XMLProjectServer.convertStringToDocument;
 import static xmlproject.XMLProjectServer.crearXML;
 
-/**
- *
- * @author Eduardo Montoya
- */
-public class PruebaExperimentalPseudoCliente {
+
+public class XMLProjectClient {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SocketException, IOException, TransformerException {
         DatagramSocket udpSocket = new DatagramSocket();
+        
         // Creates a ByteArrayOutputStream with default size
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
-        File myFile = new File("..\\XMLProject\\src\\file\\person.xml");  
+        File myFile = new File("..\\XMLProject\\src\\files\\person.xml");  
         
         out.write(Files.readAllBytes(myFile.toPath()));
         
@@ -51,9 +44,7 @@ public class PruebaExperimentalPseudoCliente {
         
         System.out.println("Waiting for an answer");
         
-        // Corrobora que si llegue el paquete
-        
-        
+        // Check that the package is received
         buffer = new byte[1024];
         packet = new DatagramPacket(buffer, buffer.length);
         
@@ -64,7 +55,7 @@ public class PruebaExperimentalPseudoCliente {
         
         ByteArrayInputStream myStream = new ByteArrayInputStream(aux);
         
-        //Metodo para sacar el String de los bytes
+        //Method to get the String out of the bytes
         int size = myStream.available();
         char[] theChars = new char[size];
         byte[] bytes    = new byte[size];
@@ -73,21 +64,23 @@ public class PruebaExperimentalPseudoCliente {
         for (int i = 0; i < size;)
             theChars[i] = (char)(bytes[i++]&0xff);
         
-        //Guarda los chars en un String
+        //Save the chars in a String
         String data = new String(theChars);
         
-        //Convierte el String en un documento xml
+        //Convert the String to an XML document
         Document doc = convertStringToDocument(data);
-        //Dirección donde se va a guardar
-        String filePath = "..\\XMLProject\\src\\file\\ClientReceived.xml";
-        //Guarda el documento
+        
+        //Path where the file is saved
+        String filePath = "..\\XMLProject\\src\\files\\ClientReceived.xml";
+        
+        //Save the file
         crearXML(doc, filePath);
         
-        //Obtiene la lista de personas del archivo XML
-        List<person> personas = getLista(filePath);
+        //Gets the list of people from the XML file
+        List<Person> people = getList(filePath);
         
-        //Se calcula la lista de personas de
-        for (person persona : personas) {
+        //The list of people is calculated
+        for (Person persona : people) {
             calcularIBM(persona);
             System.out.println(persona.getName());
             System.out.println(persona.getHeight());

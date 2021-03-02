@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package xmlproject;
 
 import java.io.ByteArrayInputStream;
@@ -26,8 +21,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import static xmlproject.XMLReaderDOM.getLista;
-import person.person;
+import person.Person;
+import static xmlproject.XMLReaderDOM.getList;
 
 /**
  *
@@ -35,9 +30,7 @@ import person.person;
  */
 public class XMLProjectServer {
 
-    /**
-     * @param args the command line arguments
-     */
+    
     public static void main(String[] args) throws SocketException, IOException, TransformerConfigurationException, TransformerException{
        
         DatagramSocket udpSocket = new DatagramSocket(1001);
@@ -54,7 +47,7 @@ public class XMLProjectServer {
         
         ByteArrayInputStream myStream = new ByteArrayInputStream(aux);
         
-        //Metodo para sacar el String de los bytes
+        //Method to get the String out of the bytes
         int size = myStream.available();
         char[] theChars = new char[size];
         byte[] bytes    = new byte[size];
@@ -63,36 +56,41 @@ public class XMLProjectServer {
         for (int i = 0; i < size;)
             theChars[i] = (char)(bytes[i++]&0xff);
         
-        //Guarda los chars en un String
+        //Save the chars in a String
         String data = new String(theChars);
                         
-        //Convierte el String en un documento xml
+        //Convert the String to an xml document
         Document doc = convertStringToDocument(data);
-        //Dirección donde se va a guardar
-        String filePath = "..\\XMLProject\\src\\file\\ServerReceived.xml";
-        //Guarda el documento
+        
+        //Path where the file is saved
+        String filePath = "..\\XMLProject\\src\\files\\ServerReceived.xml";
+        
+        //Save the file
         crearXML(doc, filePath);
         
         System.out.println("File received");
         System.out.println("Processing File");
-        //Obtiene la lista de personas del archivo XML
-        List<person> personas = getLista(filePath);
         
-        data = "<persona>\n";
-        //Se calcula la lista de personas de
-        for (person persona : personas) {
-            calcularIBM(persona);
-            data = data+persona.toString()+"\n";
+        //Get a list of people from the XML file
+        List<Person> people = getList(filePath);
+        
+        data = "<person>\n";
+        
+        //The list of people is calculated
+        for (Person person : people) {
+            calcularIBM(person);
+            data = data+person.toString()+"\n";
         }
-        data = data+"</persona>";
         
-        //System.out.println(data);
+        data = data+"</person>";
         
-        //Convierte el String en un documento xml
+        //Convert the String to an xml document
         doc = convertStringToDocument(data);
-        //Dirección donde se va a guardar
-        filePath = "..\\XMLProject\\src\\file\\ServerSend.xml";
-        //Guarda el documento
+        
+        //Path where the file is saved
+        filePath = "..\\XMLProject\\src\\files\\ServerSend.xml";
+        
+        //Save the file
         crearXML(doc, filePath);
         
         System.out.println("Sending File back");
@@ -134,17 +132,17 @@ public class XMLProjectServer {
        transformer.transform(domSource, streamResult);
     }
      
-    public static void calcularIBM(person persona)
+    public static void calcularIBM(Person person)
     {
-        persona.setBmi((Math.round((persona.getWeight()/Math.pow(persona.getHeight(), 2))*10.0)/10.0));
+        person.setBmi((Math.round((person.getWeight()/Math.pow(person.getHeight(), 2))*10.0)/10.0));
                 
-        if(persona.getBmi() < 18.5)
-            persona.setMeaning("Thin");
-        else if (persona.getBmi() < 24.9)
-            persona.setMeaning("Healthy");
-        else if (persona.getBmi() < 29.9)
-            persona.setMeaning("Overweight");
+        if(person.getBmi() < 18.5)
+            person.setMeaning("Thin");
+        else if (person.getBmi() < 24.9)
+            person.setMeaning("Healthy");
+        else if (person.getBmi() < 29.9)
+            person.setMeaning("Overweight");
         else             
-            persona.setMeaning("Obese");
+            person.setMeaning("Obese");
     }        
 }

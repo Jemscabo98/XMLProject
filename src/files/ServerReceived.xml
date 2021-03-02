@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><personas>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><people>
     <person>
         <name>Pedro</name>
         <height>1.82</height>
@@ -14,4 +14,4 @@
         <height>1.72</height>
         <weight>52</weight>
     </person>
-</personas>
+</people>
