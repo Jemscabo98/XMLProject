@@ -5,7 +5,6 @@
  */
 package xmlproject;
 
-import GUI.frmClient;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -139,9 +138,9 @@ public class Client extends javax.swing.JFrame {
             txtDoc.setText("");
             
         } catch (SocketException ex) {
-            Logger.getLogger(frmClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(frmClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         } 
     }//GEN-LAST:event_btnSendActionPerformed
 
